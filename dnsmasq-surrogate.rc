@@ -1,0 +1,24 @@
+#!/bin/sh
+
+case "$1" in
+  start)
+    /opt/bin/dnsmasq-surrogate install
+    ;;
+
+  stop)
+    /opt/bin/dnsmasq-surrogate remove
+    ;;
+
+  status)
+    /opt/bin/dnsmasq-surrogate query
+    ;;
+
+  restart)
+    /opt/bin/dnsmasq-surrogate remove
+    /opt/bin/dnsmasq-surrogate install
+    ;;
+
+  *)
+    echo "Usage: $0 (start|stop|restart|status)"
+    ;;
+esac

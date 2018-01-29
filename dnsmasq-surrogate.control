@@ -1,0 +1,14 @@
+Package: dnsmasq-surrogate
+Architecture: arm
+Priority: optional
+Section: net
+Version: 1.0.0.0
+Maintainer: third-party
+Source: http://github.com/tomasz-wiszkowski/asus-dnsmasq
+URL: http://github.com/tomasz-wiszkowski/asus-dnsmasq
+Description: Asus DNS functionality extension
+Depends:
+Suggests:
+Conflicts:
+Enabled: yes
+installed-Size: 524288
