@@ -15,7 +15,7 @@ $(APP): $(LIB_OBJS) $(EXE_OBJS)
 	g++ -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -rf *.o $(APP) *.tgz .dist
+	rm -rf *.o $(APP) *.tgz .dist version.h
 
 dist: all
 	mkdir -p .dist/bin
@@ -27,8 +27,16 @@ dist: all
 	cp $(APP) .dist/bin/$(APP)
 	tar -C .dist -zcvf $(APP).tgz .
 
-
-%.o: %.cc Makefile
+%.o: %.cc Makefile version.h
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
-
+version.h: version.h.template
+	cp $< $@
+	sed -i'' "s/{BUILD_YEAR}/$$(date +%Y)/g" $@
+	sed -i'' "s/{BUILD_MONTH}/$$(date +%-m)/g" $@
+	sed -i'' "s/{BUILD_DAY}/$$(date +%-d)/g" $@
+	sed -i'' "s/{BUILD_WEEK_DAY}/$$(date +%-u)/g" $@
+	sed -i'' "s/{BUILD_WEEK}/$$(date +%V)/g" $@
+	sed -i'' "s/{BUILD_HOUR}/$$(date +%-H)/g" $@
+	sed -i'' "s/{BUILD_MINUTE}/$$(date +%-M)/g" $@
+	sed -i'' "s/{BUILD_STAMP}/$$(date +%s)/g" $@

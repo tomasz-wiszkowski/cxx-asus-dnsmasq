@@ -34,6 +34,7 @@
 #include "nvram.h"
 #include "process_nvram.h"
 #include "scoped_service_shutdown.h"
+#include "version.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -151,6 +152,13 @@ void rebuildConfig() {
   c.Save("/etc/dnsmasq.conf");
 }
 
+int version() {
+  std::clog << "Version " << kBuildMajor << '.' << kBuildMinor << '.'
+            << kBuildPatch << " built on " << kBuildDay << '.' << kBuildMonth
+            << '.' << kBuildYear << '\n';
+  return 0;
+}
+
 // Rebuild and print out configuration values.
 // TODO: This currently depends on logging invoked by calls used to re-configure
 // dnsmasq.
@@ -180,6 +188,7 @@ int main(int argc, char* const argv[]) {
       if (argv[1] == "install"sv) return installSubstitute();
       if (argv[1] == "remove"sv) return removeSubstitute();
       if (argv[1] == "query"sv) return querySystem();
+      if (argv[1] == "version"sv) return version();
     }
     return help(argv[0]);
   }
