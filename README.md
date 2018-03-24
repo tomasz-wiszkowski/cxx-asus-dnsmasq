@@ -61,6 +61,23 @@ IP addresses and host names.
 This tool does not automaticaly assign names to dynamically configured hosts
 yet. There is nothing else you'd need to do.
 
+### Using additional hosts / ad-block functionality
+
+Surrogate can feed dnsmasq with any additional `hosts` files, thus providing a
+functionality similar to adblock.
+
+To enable this functionality, once surrogate is installed, copy any additional
+hosts files to `/jffs/dnsmasq-surrogate/hosts/` folder. These files can be
+acquired from multiple sites, eg. [StevenBlack's github
+repo](https://github.com/StevenBlack/hosts).
+
+Once files are copied to `/jffs/dnsmasq-surrogate/hosts/` folder, you will need
+to manually restart dnsmasq service - or reboot your router.
+
+```
+# service restart_dnsmas
+```
+
 ### Disabling and re-enabling utility
 
 To disable utility, log in to your router as admin and execute:
