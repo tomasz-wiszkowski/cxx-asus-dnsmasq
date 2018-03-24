@@ -75,7 +75,7 @@ Once files are copied to `/jffs/dnsmasq-surrogate/hosts/` folder, you will need
 to manually restart dnsmasq service - or reboot your router.
 
 ```
-# service restart_dnsmas
+# service restart_dnsmasq
 ```
 
 ### Disabling and re-enabling utility
