@@ -16,9 +16,13 @@ BUILD_HOUR    := $(shell date +%-H)
 BUILD_MINUTE  := $(shell date +%-M)
 BUILD_STAMP   := $(shell date +%s)
 
-BUILD_MAJOR   := $(shell echo $$(( $(BUILD_YEAR) - 2017)) )
-BUILD_MINOR   := $(BUILD_WEEK)
-BUILD_PATCH   := $(shell echo $$(( $(BUILD_WEEKDAY) * 24 * 6 + $(BUILD_HOUR) * 6 + $(BUILD_MINUTE) / 10 )) )
+BUILD_REC_MAJOR := $(shell echo $$(( $(BUILD_YEAR) - 2017)) )
+BUILD_REC_MINOR := $(BUILD_WEEK)
+BUILD_REC_PATCH := $(shell echo $$(( $(BUILD_WEEKDAY) * 24 * 6 + $(BUILD_HOUR) * 6 + $(BUILD_MINUTE) / 10 )) )
+
+BUILD_MAJOR     := 1
+BUILD_MINOR     := 12
+BUILD_PATCH     := 978
 
 APP  := dnsmasq-surrogate
 HOST := $(shell hostname)
@@ -46,15 +50,17 @@ dist: all
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 version.h: version.h.template
-	cp $< $@
-	sed -i'' "s/{BUILD_YEAR}/$(BUILD_YEAR)/g" $@
-	sed -i'' "s/{BUILD_MONTH}/$(BUILD_MONTH)/g" $@
-	sed -i'' "s/{BUILD_DAY}/$(BUILD_DAY)/g" $@
-	sed -i'' "s/{BUILD_WEEK_DAY}/$(BUILD_WEEKDAY)/g" $@
-	sed -i'' "s/{BUILD_WEEK}/$(BUILD_WEEK)/g" $@
-	sed -i'' "s/{BUILD_HOUR}/$(BUILD_HOUR)/g" $@
-	sed -i'' "s/{BUILD_MINUTE}/$(BUILD_MINUTE)/g" $@
-	sed -i'' "s/{BUILD_STAMP}/$(BUILD_STAMP)/g" $@
-	sed -i'' "s/{BUILD_MAJOR}/$(BUILD_MAJOR)/g" $@
-	sed -i'' "s/{BUILD_MINOR}/$(BUILD_MINOR)/g" $@
-	sed -i'' "s/{BUILD_PATCH}/$(BUILD_PATCH)/g" $@
+	@echo "Building version : $(BUILD_MAJOR).$(BUILD_MINOR).$(BUILD_PATCH)"
+	@echo "Recommending     : $(BUILD_REC_MAJOR).$(BUILD_REC_MINOR).$(BUILD_REC_PATCH)"
+	@cp $< $@
+	@sed -i'' "s/{BUILD_YEAR}/$(BUILD_YEAR)/g" $@
+	@sed -i'' "s/{BUILD_MONTH}/$(BUILD_MONTH)/g" $@
+	@sed -i'' "s/{BUILD_DAY}/$(BUILD_DAY)/g" $@
+	@sed -i'' "s/{BUILD_WEEK_DAY}/$(BUILD_WEEKDAY)/g" $@
+	@sed -i'' "s/{BUILD_WEEK}/$(BUILD_WEEK)/g" $@
+	@sed -i'' "s/{BUILD_HOUR}/$(BUILD_HOUR)/g" $@
+	@sed -i'' "s/{BUILD_MINUTE}/$(BUILD_MINUTE)/g" $@
+	@sed -i'' "s/{BUILD_STAMP}/$(BUILD_STAMP)/g" $@
+	@sed -i'' "s/{BUILD_MAJOR}/$(BUILD_MAJOR)/g" $@
+	@sed -i'' "s/{BUILD_MINOR}/$(BUILD_MINOR)/g" $@
+	@sed -i'' "s/{BUILD_PATCH}/$(BUILD_PATCH)/g" $@
