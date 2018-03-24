@@ -7,7 +7,22 @@ EXE_OBJS := $(EXE_SRCS:.cc=.o)
 CXXFLAGS := -std=c++17 -Wall -O9
 LDFLAGS := -lstdc++fs -lnvram -lwlcsm -lshared
 
-APP := dnsmasq-surrogate
+BUILD_YEAR    := $(shell date +%Y)
+BUILD_MONTH   := $(shell date +%-m)
+BUILD_DAY     := $(shell date +%-d)
+BUILD_WEEK    := $(shell date +%V)
+BUILD_WEEKDAY := $(shell date +%-u)
+BUILD_HOUR    := $(shell date +%-H)
+BUILD_MINUTE  := $(shell date +%-M)
+BUILD_STAMP   := $(shell date +%s)
+
+BUILD_MAJOR   := $(shell echo $$(( $(BUILD_YEAR) - 2017)) )
+BUILD_MINOR   := $(BUILD_WEEK)
+BUILD_PATCH   := $(shell echo $$(( $(BUILD_WEEKDAY) * 24 * 6 + $(BUILD_HOUR) * 6 + $(BUILD_MINUTE) / 10 )) )
+
+APP  := dnsmasq-surrogate
+HOST := $(shell hostname)
+DIST := $(APP)-$(HOST)-$(BUILD_MAJOR).$(BUILD_MINOR).$(BUILD_PATCH)
 
 all: $(APP)
 
@@ -25,18 +40,21 @@ dist: all
 	chmod a+x .dist/etc/init.d/S50$(APP)
 	cp $(APP).control .dist/lib/ipkg/info/$(APP).control
 	cp $(APP) .dist/bin/$(APP)
-	tar -C .dist -zcvf $(APP).tgz .
+	tar -C .dist -zcvf $(DIST).tgz .
 
 %.o: %.cc Makefile version.h
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 version.h: version.h.template
 	cp $< $@
-	sed -i'' "s/{BUILD_YEAR}/$$(date +%Y)/g" $@
-	sed -i'' "s/{BUILD_MONTH}/$$(date +%-m)/g" $@
-	sed -i'' "s/{BUILD_DAY}/$$(date +%-d)/g" $@
-	sed -i'' "s/{BUILD_WEEK_DAY}/$$(date +%-u)/g" $@
-	sed -i'' "s/{BUILD_WEEK}/$$(date +%V)/g" $@
-	sed -i'' "s/{BUILD_HOUR}/$$(date +%-H)/g" $@
-	sed -i'' "s/{BUILD_MINUTE}/$$(date +%-M)/g" $@
-	sed -i'' "s/{BUILD_STAMP}/$$(date +%s)/g" $@
+	sed -i'' "s/{BUILD_YEAR}/$(BUILD_YEAR)/g" $@
+	sed -i'' "s/{BUILD_MONTH}/$(BUILD_MONTH)/g" $@
+	sed -i'' "s/{BUILD_DAY}/$(BUILD_DAY)/g" $@
+	sed -i'' "s/{BUILD_WEEK_DAY}/$(BUILD_WEEKDAY)/g" $@
+	sed -i'' "s/{BUILD_WEEK}/$(BUILD_WEEK)/g" $@
+	sed -i'' "s/{BUILD_HOUR}/$(BUILD_HOUR)/g" $@
+	sed -i'' "s/{BUILD_MINUTE}/$(BUILD_MINUTE)/g" $@
+	sed -i'' "s/{BUILD_STAMP}/$(BUILD_STAMP)/g" $@
+	sed -i'' "s/{BUILD_MAJOR}/$(BUILD_MAJOR)/g" $@
+	sed -i'' "s/{BUILD_MINOR}/$(BUILD_MINOR)/g" $@
+	sed -i'' "s/{BUILD_PATCH}/$(BUILD_PATCH)/g" $@
