@@ -24,6 +24,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mount.h>
@@ -41,6 +42,18 @@ namespace fs = std::experimental::filesystem;
 // their running state or when it shuts them down (~"pkill").
 constexpr char kTemporaryName[] = "/tmp/dnsmasq";
 constexpr char kOriginalName[] = "/usr/sbin/dnsmasq";
+constexpr char kDnsMasqHostsPath[] = "/jffs/dnsmasq-surrogate/hosts";
+
+// Get path to this executable
+std::string getSelfPath() {
+  char path[PATH_MAX];
+  auto len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+  if (len > 0) {
+    path[len] = 0;
+    return path;
+  }
+  return "/proc/self/exe";
+}
 
 // Install dnsmasq substitute using bind-mounting.
 // The replacement will point to us as a surrogate; this gives us time to look
@@ -50,7 +63,7 @@ constexpr char kOriginalName[] = "/usr/sbin/dnsmasq";
 // Restarts dnsmasq service.
 //
 // Returns 0 on success.
-int installSubstitute(const fs::path& self_path) {
+int installSubstitute() {
   {
     std::ofstream marker{kTemporaryName};
     if (!marker.good()) {
@@ -71,12 +84,15 @@ int installSubstitute(const fs::path& self_path) {
     return 1;
   }
 
+  auto self_path = getSelfPath();
   res = mount(self_path.c_str(), kOriginalName, nullptr, MS_BIND, nullptr);
   if (res) {
     std::clog << "Could not install " << kOriginalName << ": "
               << strerror(errno) << '\n';
     return 1;
   }
+
+  fs::create_directories(kDnsMasqHostsPath);
 
   return 0;
 }
@@ -86,7 +102,7 @@ int installSubstitute(const fs::path& self_path) {
 // Restarts dnsmasq service.
 //
 // Returns 0 on success.
-int removeSubstitute(const fs::path& self_path) {
+int removeSubstitute() {
   std::clog << "Removing surrogate...\n";
 
   asus::ScopedServiceShutdown dnsmasq("dnsmasq");
@@ -95,14 +111,12 @@ int removeSubstitute(const fs::path& self_path) {
   if (res) {
     std::clog << "Could not uninstall " << kOriginalName << ": "
               << strerror(errno) << '\n';
-    return 1;
   }
 
   res = umount2(kTemporaryName, MNT_FORCE);
   if (res) {
     std::clog << "Could not install " << kTemporaryName << ": "
               << strerror(errno) << '\n';
-    return 1;
   }
 
   return 0;
@@ -127,6 +141,13 @@ void rebuildConfig() {
   asus::DnsMasqConfig c;
   c.Load("/etc/dnsmasq.conf");
   c.RewriteHosts(clients);
+
+  for (auto&& d : fs::directory_iterator(kDnsMasqHostsPath)) {
+    if (fs::is_regular_file(d.status())) {
+      c.AddHostsFile(d.path());
+    }
+  }
+
   c.Save("/etc/dnsmasq.conf");
 }
 
@@ -156,8 +177,8 @@ int main(int argc, char* const argv[]) {
     std::clog << "Could not start dnsmasq: " << strerror(errno) << "\n";
   } else {
     if (argc == 2) {
-      if (argv[1] == "install"sv) return installSubstitute(self_path);
-      if (argv[1] == "remove"sv) return removeSubstitute(self_path);
+      if (argv[1] == "install"sv) return installSubstitute();
+      if (argv[1] == "remove"sv) return removeSubstitute();
       if (argv[1] == "query"sv) return querySystem();
     }
     return help(argv[0]);

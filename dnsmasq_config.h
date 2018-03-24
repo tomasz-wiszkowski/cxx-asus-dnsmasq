@@ -54,6 +54,11 @@ class DnsMasqConfig {
   // details see HostInfo::MergeFrom.
   void RewriteHosts(const HostInfoMap& hosts);
 
+  // Attach specified hosts file to the dnsmasq.conf.
+  // If the specified file exists, it will be appended via addn-hosts to
+  // dnsmasq.conf file.
+  void AddHostsFile(const std::string& hosts_file);
+
   // Save dnsmasq configuration to a specified file.
   // Configuration options are saved in a modified order; original order of
   // configuration options will not be preserved.

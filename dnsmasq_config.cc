@@ -22,10 +22,13 @@
 
 #include "dnsmasq_config.h"
 
+#include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
 #include <string_view>
 #include <type_traits>
+
+namespace fs = std::experimental::filesystem;
 
 namespace asus {
 
@@ -94,6 +97,16 @@ void DnsMasqConfig::RewriteHosts(const HostInfoMap& hosts) {
         opt.second);
     std::clog << '\n';
   }
+}
+
+void DnsMasqConfig::AddHostsFile(const std::string& hosts_file) {
+  {
+    std::ifstream file(hosts_file);
+    if (!file.good()) return;
+  }
+  fs::path hosts_path = fs::current_path();
+  hosts_path.append(hosts_file);
+  options_.emplace("addn-hosts", hosts_path);
 }
 
 void DnsMasqConfig::Save(const std::string& dest) {
