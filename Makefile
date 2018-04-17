@@ -1,3 +1,7 @@
+CC  := arm-linux-gnueabi-gcc-8
+CXX := arm-linux-gnueabi-g++-8
+LD  := arm-linux-gnueabi-ld
+
 LIB_SRCS := process_nvram.cc dnsmasq_config.cc host_info.cc
 LIB_OBJS := $(LIB_SRCS:.cc=.o)
 
@@ -5,7 +9,7 @@ EXE_SRCS := main.cc
 EXE_OBJS := $(EXE_SRCS:.cc=.o)
 
 CXXFLAGS := -std=c++17 -Wall -O9
-LDFLAGS := -lstdc++fs -lnvram -lwlcsm -lshared
+LDFLAGS := -lstdc++fs -L. -Wl,-rpath,/lib -lnvram
 
 BUILD_YEAR    := $(shell date +%Y)
 BUILD_MONTH   := $(shell date +%-m)
@@ -30,8 +34,10 @@ DIST := $(APP)-$(HOST)-$(BUILD_MAJOR).$(BUILD_MINOR).$(BUILD_PATCH)
 
 all: $(APP)
 
-$(APP): $(LIB_OBJS) $(EXE_OBJS)
-	g++ -o $@ $^ $(LDFLAGS)
+include mock/nvram.mk
+
+$(APP): $(LIB_OBJS) $(EXE_OBJS) $(NVRAM_MOCK)
+	$(CXX) -o $@ $(EXE_OBJS) $(LIB_OBJS) $(LDFLAGS)
 
 clean:
 	rm -rf *.o $(APP) *.tgz .dist version.h

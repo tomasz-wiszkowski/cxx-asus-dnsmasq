@@ -31,7 +31,7 @@
 #include <unistd.h>
 
 #include "dnsmasq_config.h"
-#include "nvram.h"
+#include "mock/nvram.h"
 #include "process_nvram.h"
 #include "scoped_service_shutdown.h"
 #include "version.h"
