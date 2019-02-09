@@ -8,6 +8,8 @@ LIB_OBJS := $(LIB_SRCS:.cc=.o)
 EXE_SRCS := main.cc
 EXE_OBJS := $(EXE_SRCS:.cc=.o)
 
+TEST_SRCS := host_info.cc process_nvram.cc test.cc
+
 CXXFLAGS := -std=c++17 -Wall -O9
 LDFLAGS := -lstdc++fs -L. -Wl,-rpath,/lib -lnvram
 
@@ -42,6 +44,9 @@ $(APP): $(LIB_OBJS) $(EXE_OBJS) $(NVRAM_MOCK)
 clean:
 	rm -rf *.o $(APP) *.tgz .dist version.h
 
+test: $(TEST_SRCS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
 dist: all
 	mkdir -p .dist/bin
 	mkdir -p .dist/etc/init.d
@@ -70,3 +75,4 @@ version.h: version.h.template
 	@sed -i'' "s/{BUILD_MAJOR}/$(BUILD_MAJOR)/g" $@
 	@sed -i'' "s/{BUILD_MINOR}/$(BUILD_MINOR)/g" $@
 	@sed -i'' "s/{BUILD_PATCH}/$(BUILD_PATCH)/g" $@
+

@@ -1,7 +1,49 @@
-std::string gTestData = "<Lutron Caseta>68:9E:19:4B:43:14>0>0>>>><Phone: Galaxy S8>B8:D7:AF:8E:64:43>0>0>>>><Logitech HarmonyHub>00:04:20:E9:AE:E2>0>0>>>><Tablet: Asus Nexus7>AC:22:0B:46:2A:08>0>9>>>><Macbook Pro: Tomek (WIFI)>AC:BC:32:C6:DB:73>0>6>>>><Macbook Pro: Tomek (Wired)>38:C9:86:08:18:9D>0>6>>>><yamaha>50:72:24:4C:DC:CC>0>0>>>><Xrawler>E0:D5:5E:25:5E:16>0>0>>>><nuc>A4:34:D9:2C:AF:01>0>0>>>><pi>B8:27:EB:2E:6F:96>0>0>>>><cast>48:D6:D5:01:4D:38>0>27>>>><vizio>CC:95:D7:84:E0:84>0>0>>>><nuc>00:1F:C6:9B:95:5C>0>0>>>><syno>00:11:32:85:AB:51>0>0>>>><sayno>00:11:32:17:BB:0D>0>0>>>><asus3>14:DD:A9:6F:36:70>0>0>>>><Downstairs Router>2C:4D:54:1E:A4:50>0>0>>>><Macbook Pro: Gosia (WIFI)>C4:B3:01:BB:5E:A5>0>6>>>><Tablet: Nexus 9>AC:37:43:4B:C5:49>0>9>>>><mazda>FC:35:E6:F2:AC:DC>0>0>>>><xpc>E0:D5:5E:25:5E:18>0>0>>>><vmx>00:0C:29:03:70:1B>0>0>>>><soundbar>F0:C7:7F:E2:47:FF>0>0>>>><Chamberlain 1>64:52:99:1E:9D:5E>0>0>>>><Chamberlain 2>64:52:99:1E:9D:64>0>0>>>><Google Home>F4:F5:D8:A4:D6:64>0>0>>>><ASUS RT-AC5300>2C:4D:54:1E:A4:51>0>0>>>><printer>B0:52:16:A1:F5:CA>0>0>>>><Google Nest Doorbell>18:B4:30:E8:A1:73>0>0>>>><Google Chromecast Ultra>44:09:B8:12:2C:F5>0>27>>>><Belkin WeMo (coffee counter)>14:91:82:B5:22:7B>0>0>>>><Google Nest Thermostat>64:16:66:1F:4E:34>0>0>>>><FP Camera Fireplace>00:02:D1:72:E3:2E>0>0>>>><FP Camera Living Room>00:02:D1:64:26:67>0>0>>>><FP Camera Cats Room>00:02:D1:72:E3:1E>0>0>>>><FP Camera Bedroom>00:02:D1:72:E1:0C>0>0>>>><Work Laptop (Gosia)>F0:03:8C:E4:DA:C8>0>0>>>><FP Camera Garage>00:02:D1:72:DF:4A>0>0>>>><FP Camera Driveway>00:02:D1:73:57:DF>0>0>>>><XiaoMi Box S>E4:DB:6D:62:11:02>0>0>>>><hyper20>00:15:5D:2E:01:01>0>4>><hyper8>00:15:5D:56:FD:00>0>4>>";
+#include "process_nvram.h"
 
+std::string gTestData =
+    "<Lutron Caseta>68:9E:19:4B:43:14>0>0>>>>"
+    "<Phone: Galaxy S8>B8:D7:AF:8E:64:43>0>0>>>>"
+    "<Logitech HarmonyHub>00:04:20:E9:AE:E2>0>0>>>>"
+    "<Tablet: Asus Nexus7>AC:22:0B:46:2A:08>0>9>>>>"
+    "<Macbook Pro: Tomek (WIFI)>AC:BC:32:C6:DB:73>0>6>>>>"
+    "<Macbook Pro: Tomek (Wired)>38:C9:86:08:18:9D>0>6>>>>"
+    "<yamaha>50:72:24:4C:DC:CC>0>0>>>>"
+    "<Xrawler>E0:D5:5E:25:5E:16>0>0>>>>"
+    "<nuc>A4:34:D9:2C:AF:01>0>0>>>>"
+    "<pi>B8:27:EB:2E:6F:96>0>0>>>>"
+    "<cast>48:D6:D5:01:4D:38>0>27>>>>"
+    "<vizio>CC:95:D7:84:E0:84>0>0>>>>"
+    "<nuc>00:1F:C6:9B:95:5C>0>0>>>>"
+    "<syno>00:11:32:85:AB:51>0>0>>>>"
+    "<sayno>00:11:32:17:BB:0D>0>0>>>>"
+    "<asus3>14:DD:A9:6F:36:70>0>0>>>>"
+    "<Downstairs Router>2C:4D:54:1E:A4:50>0>0>>>>"
+    "<Macbook Pro: Gosia (WIFI)>C4:B3:01:BB:5E:A5>0>6>>>>"
+    "<Tablet: Nexus 9>AC:37:43:4B:C5:49>0>9>>>>"
+    "<mazda>FC:35:E6:F2:AC:DC>0>0>>>>"
+    "<xpc>E0:D5:5E:25:5E:18>0>0>>>>"
+    "<vmx>00:0C:29:03:70:1B>0>0>>>>"
+    "<soundbar>F0:C7:7F:E2:47:FF>0>0>>>>"
+    "<Chamberlain 1>64:52:99:1E:9D:5E>0>0>>>>"
+    "<Chamberlain 2>64:52:99:1E:9D:64>0>0>>>>"
+    "<Google Home>F4:F5:D8:A4:D6:64>0>0>>>>"
+    "<ASUS RT-AC5300>2C:4D:54:1E:A4:51>0>0>>>>"
+    "<printer>B0:52:16:A1:F5:CA>0>0>>>>"
+    "<Google Nest Doorbell>18:B4:30:E8:A1:73>0>0>>>>"
+    "<Google Chromecast Ultra>44:09:B8:12:2C:F5>0>27>>>>"
+    "<Belkin WeMo (coffee counter)>14:91:82:B5:22:7B>0>0>>>>"
+    "<Google Nest Thermostat>64:16:66:1F:4E:34>0>0>>>>"
+    "<FP Camera Fireplace>00:02:D1:72:E3:2E>0>0>>>>"
+    "<FP Camera Living Room>00:02:D1:64:26:67>0>0>>>>"
+    "<FP Camera Cats Room>00:02:D1:72:E3:1E>0>0>>>>"
+    "<FP Camera Bedroom>00:02:D1:72:E1:0C>0>0>>>>"
+    "<Work Laptop (Gosia)>F0:03:8C:E4:DA:C8>0>0>>>>"
+    "<FP Camera Garage>00:02:D1:72:DF:4A>0>0>>>>"
+    "<FP Camera Driveway>00:02:D1:73:57:DF>0>0>>>>"
+    "<XiaoMi Box S>E4:DB:6D:62:11:02>0>0>>>>"
+    "<hyper20>00:15:5D:2E:01:01>0>4>>"
+    "<hyper8>00:15:5D:56:FD:00>0>4>>";
 
 int main(void) {
-  auto map = ProcessCustomClientList(gTestData);
-
+  auto map = asus::ProcessCustomClientList(gTestData);
 }
