@@ -21,15 +21,8 @@
 //
 #pragma once
 
-constexpr int kBuildYear = {BUILD_YEAR};
-constexpr int kBuildMonth = {BUILD_MONTH};
-constexpr int kBuildDay = {BUILD_DAY};
-constexpr int kBuildWeek = {BUILD_WEEK};
-constexpr int kBuildWeekDay = {BUILD_WEEK_DAY};
-constexpr int kBuildHour = {BUILD_HOUR};
-constexpr int kBuildMinute = {BUILD_MINUTE};
-constexpr int kBuildStamp = {BUILD_STAMP};
+#include <string_view>
 
-constexpr int kBuildMajor = {BUILD_MAJOR};
-constexpr int kBuildMinor = {BUILD_MINOR};
-constexpr int kBuildPatch = {BUILD_PATCH};
+constexpr std::string_view kVersionString =
+    "Version {BUILD_MAJOR}.{BUILD_MINOR}.{BUILD_PATCH}-{BUILD_HEAD} "
+    "built on {BUILD_HOST} by {BUILD_USER} on {BUILD_STAMP}";

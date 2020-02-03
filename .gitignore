@@ -3,3 +3,10 @@ version.h
 
 *.o
 *.so
+.*.sw?
+*.tar
+*.gz
+*.tgz
+.dnsmasq_config.cc.swp .Makefile.swp
+
+dnsmasq-surrogate

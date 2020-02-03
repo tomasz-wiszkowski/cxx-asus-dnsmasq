@@ -4,5 +4,5 @@ NVRAM_OBJS := $(NVRAM_SRCS:.c=.o)
 NVRAM_MAKE := $(lastword $(MAKEFILE_LIST))
 
 $(NVRAM_MOCK): $(NVRAM_OBJS)
-	$(CXX) -shared -o $@ $<
+	$(TGT_CXX) $(TGT_CXXFLAGS) -shared -o $@ $<
 

@@ -153,9 +153,7 @@ void rebuildConfig() {
 }
 
 int version() {
-  std::clog << "Version " << kBuildMajor << '.' << kBuildMinor << '.'
-            << kBuildPatch << " built on " << kBuildDay << '.' << kBuildMonth
-            << '.' << kBuildYear << '\n';
+  std::clog << kVersionString;
   return 0;
 }
 
