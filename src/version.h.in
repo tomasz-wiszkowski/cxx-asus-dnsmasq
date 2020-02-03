@@ -24,5 +24,4 @@
 #include <string_view>
 
 constexpr std::string_view kVersionString =
-    "Version {BUILD_MAJOR}.{BUILD_MINOR}.{BUILD_PATCH}-{BUILD_HEAD} "
-    "built on {BUILD_HOST} by {BUILD_USER} on {BUILD_STAMP}";
+    "Version ${PROJECT_VERSION}-${GIT_SHA}${GIT_STATE}";

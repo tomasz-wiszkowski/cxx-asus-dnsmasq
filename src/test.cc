@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "process_nvram.h"
 
 std::string gTestData =
