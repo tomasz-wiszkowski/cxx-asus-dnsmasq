@@ -3,6 +3,7 @@ version.h
 
 *.o
 *.so
+
 .*.sw?
 *.tar
 *.gz
