@@ -20,15 +20,15 @@
 // SOFTWARE.
 //
 
-#include <experimental/filesystem>
-#include <fstream>
-#include <iostream>
-
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mount.h>
 #include <unistd.h>
+
+#include <experimental/filesystem>
+#include <fstream>
+#include <iostream>
 
 #include "dnsmasq_config.h"
 #include "mock/nvram.h"
@@ -126,21 +126,27 @@ int removeSubstitute() {
 // Print usage to console.
 int help(char* const cmd) {
   std::clog << "Usage:\n";
-  std::clog << "\t" << cmd << " install -- install surrogate and "
-                              "restart service\n";
-  std::clog << "\t" << cmd << " remove  -- remove surrogate and "
-                              "restart service\n";
-  std::clog << "\t" << cmd << " query   -- print information about system\n";
+  std::clog << "\t" << cmd
+            << " install      -- install surrogate and restart service.\n";
+  std::clog << "\t" << cmd
+            << " remove       -- remove surrogate and restart service.\n";
+  std::clog << "\t" << cmd
+            << " showconfig   -- dump resulting config on screen.\n";
+  std::clog << "\t" << cmd
+            << " version      -- show software version and exit.\n";
   return 1;
 }
 
-// Rebuild and save dnsmasq configuration file. Execute this right before
-// jumping to actual dnsmasq to supply hostnames in your system.
-void rebuildConfig() {
+asus::DnsMasqConfig buildConfig() {
+  static constexpr const char cfgpath[] = "/etc/dnsmasq.conf";
+
   auto clients =
       asus::ProcessCustomClientList(bcm::nvram_get("custom_clientlist"));
   asus::DnsMasqConfig c;
-  c.Load("/etc/dnsmasq.conf");
+
+  std::ifstream cfg(cfgpath);
+  if (cfg.good()) c.Load(cfg);
+
   c.RewriteHosts(clients);
 
   for (auto&& d : fs::directory_iterator(kDnsMasqHostsPath)) {
@@ -149,25 +155,32 @@ void rebuildConfig() {
     }
   }
 
-  c.Save("/etc/dnsmasq.conf");
+  return c;
 }
 
-int version() {
-  std::clog << kVersionString;
+// Rebuild and save dnsmasq configuration file. Execute this right before
+// jumping to actual dnsmasq to supply hostnames in your system.
+void rebuildConfig() {
+  auto c = buildConfig();
+  static constexpr const char cfgpath[] = "/etc/dnsmasq.conf";
+
+  std::ofstream cfg(cfgpath);
+  if (!cfg.good()) {
+    std::clog << "Could not save dnsmasq config file " << cfgpath << '\n';
+    return;
+  }
+
+  c.Save(cfg);
+}
+
+int showConfig() {
+  auto c = buildConfig();
+  c.Save(std::clog);
   return 0;
 }
 
-// Rebuild and print out configuration values.
-// TODO: This currently depends on logging invoked by calls used to re-configure
-// dnsmasq.
-//
-// Returns 0 on success.
-int querySystem() {
-  auto clients =
-      asus::ProcessCustomClientList(bcm::nvram_get("custom_clientlist"));
-  asus::DnsMasqConfig c;
-  c.Load("/etc/dnsmasq.conf");
-  c.RewriteHosts(clients);
+int version() {
+  std::clog << kVersionString << '\n';
   return 0;
 }
 
@@ -185,8 +198,8 @@ int main(int argc, char* const argv[]) {
     if (argc == 2) {
       if (argv[1] == "install"sv) return installSubstitute();
       if (argv[1] == "remove"sv) return removeSubstitute();
-      if (argv[1] == "query"sv) return querySystem();
       if (argv[1] == "version"sv) return version();
+      if (argv[1] == "showconfig"sv) return showConfig();
     }
     return help(argv[0]);
   }

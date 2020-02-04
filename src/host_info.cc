@@ -25,9 +25,7 @@
 
 namespace asus {
 
-void HostInfo::HostMacAddressToId() {
-  state_ = HostInfoState::OK;
-
+void HostInfo::BuildIdFromMacAddress() {
   union {
     uint64_t mac = 0;
     uint8_t bytes[8];
@@ -46,7 +44,12 @@ void HostInfo::HostMacAddressToId() {
 void HostInfo::Validate() {
   state_ = HostInfoState::OK;
 
-  if (!name_) return;
+  BuildIdFromMacAddress();
+  if (state_ != HostInfoState::OK) return;
+}
+
+bool HostInfo::HasValidHostName() const {
+  if (!name_) return false;
 
   for (auto c : name_.value()) {
     switch (c) {
@@ -57,10 +60,10 @@ void HostInfo::Validate() {
         break;
 
       default:
-        state_ = HostInfoState::UnacceptableName;
-        return;
+        return false;
     }
   }
+  return true;
 }
 
 std::ostream& operator<<(std::ostream& out, HostInfoState e) {
@@ -71,10 +74,6 @@ std::ostream& operator<<(std::ostream& out, HostInfoState e) {
 
     case HostInfoState::InvalidMacAddress:
       out << "InvalidMacAddress";
-      break;
-
-    case HostInfoState::UnacceptableName:
-      out << "UnacceptableName";
       break;
   }
   return out;

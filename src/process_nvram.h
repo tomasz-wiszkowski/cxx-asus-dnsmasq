@@ -41,6 +41,9 @@ enum class ParseResult {
 
   // Missing field marker ('>')
   MissingFieldEndMarker,
+
+  // Invalid entry or other processing error.
+  InvalidDefinition,
 };
 
 // Convert Asus nvram custom_clientlist to a HostInfoMap.
@@ -50,6 +53,6 @@ HostInfoMap ProcessCustomClientList(std::string_view input);
 std::variant<HostInfo, ParseResult> ExtractClientInfo(std::string_view client);
 
 // Logging.
-std::ostream& operator << (std::ostream& out, ParseResult e);
+std::ostream& operator<<(std::ostream& out, ParseResult e);
 
 }  // namespace asus

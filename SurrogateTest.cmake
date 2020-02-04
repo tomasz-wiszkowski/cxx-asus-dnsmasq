@@ -13,26 +13,31 @@ include(GoogleTest)
 
 set(GTEST_SRC "${CMAKE_BINARY_DIR}/third-party/googletest-src")
 set(GTEST_BIN "${CMAKE_BINARY_DIR}/third-party/googletest-bin")
+set(GTEST_PFX "${CMAKE_BINARY_DIR}/third-party/googletest-pfx")
 
 ExternalProject_Add(googletest
    GIT_REPOSITORY    https://github.com/google/googletest.git
    GIT_TAG           master
+	 PREFIX            "${GTEST_PFX}"
    SOURCE_DIR        "${GTEST_SRC}"
    BINARY_DIR        "${GTEST_BIN}"
-   CONFIGURE_COMMAND ""
-   BUILD_COMMAND     ""
+	 INSTALL_DIR       "${GTEST_BIN}"
    INSTALL_COMMAND   ""
    TEST_COMMAND      ""
 )
 
 include_directories(${GTEST_SRC}/googletest/include)
+link_directories(${GTEST_BIN}/lib)
 
 add_executable(surrogate-tests
-    src/test.cc
+    src/process_nvram_test.cc
 )
 
 target_link_libraries(surrogate-tests
     surrogate
+		gtest
+		gtest_main
+		pthread
 )
 
 add_dependencies(surrogate-tests googletest)
