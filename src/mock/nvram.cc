@@ -22,7 +22,5 @@
 #include "nvram.h"
 
 namespace bcm {
-const char* nvram_get(const char* key) {
-  return nullptr;
-}
+const char* nvram_get(const char* key) { return nullptr; }
 }  // namespace bcm
