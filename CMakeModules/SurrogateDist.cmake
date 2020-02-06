@@ -5,7 +5,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set(CMAKE_CXX_COMPILER arm-linux-gnueabi-g++-9)
-set(CMAKE_CXX_FLAGS    "-Wl,-rpath,/lib ${CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS    "-Wl,-rpath,/lib -s ${CXX_FLAGS}")
 
 include(SurrogateCommon)
 
