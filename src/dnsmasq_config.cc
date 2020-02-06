@@ -43,9 +43,8 @@ DnsMasqConfig::ValueType DnsMasqConfig::ParseConfigValue(
     // This config already uses host name.
     if (host_end != std::string::npos) return std::string{value};
 
-    auto res =
-        HostInfo::WithIpAddr(std::string(value.substr(0, mac_end)),
-                      std::string(value.substr(mac_end + 1)));
+    auto res = HostInfo::WithIpAddr(std::string(value.substr(0, mac_end)),
+                                    std::string(value.substr(mac_end + 1)));
 
     if (std::holds_alternative<HostInfo>(res)) {
       return std::get<HostInfo>(std::move(res));

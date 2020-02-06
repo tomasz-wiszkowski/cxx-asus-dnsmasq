@@ -29,3 +29,10 @@ install(
     TARGETS ${PROJECT_NAME}
     DESTINATION bin
 )
+
+# This target requires 'make install' to be called first.
+add_custom_target(dist
+    WORKING_DIRECTORY dist
+    COMMAND ${CMAKE_COMMAND} -E tar czf ../surrogate.tar.gz .
+)
+

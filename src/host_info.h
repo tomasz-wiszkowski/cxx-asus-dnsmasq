@@ -43,8 +43,8 @@ enum class HostInfoState {
 // HostInfo contains configuration details for a single host.
 class HostInfo {
  public:
-  static std::variant<HostInfo, HostInfoState> WithIpAddr(
-      std::string mac, std::string ip) {
+  static std::variant<HostInfo, HostInfoState> WithIpAddr(std::string mac,
+                                                          std::string ip) {
     HostInfo res;
     res.mac_addr_ = std::move(mac);
     res.ip_addr_ = std::move(ip);
@@ -53,8 +53,8 @@ class HostInfo {
     return res;
   }
 
-  static std::variant<HostInfo, HostInfoState> WithName(
-      std::string mac, std::string name) {
+  static std::variant<HostInfo, HostInfoState> WithName(std::string mac,
+                                                        std::string name) {
     HostInfo res;
     res.name_ = std::move(name);
     res.mac_addr_ = std::move(mac);

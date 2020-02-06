@@ -25,7 +25,7 @@ TEST_F(ProcessNVRamTest, ReadSingleValidElement) {
 
   ASSERT_EQ(1, map.size());
 
-  const auto &elem = map.begin()->second;
+  const auto& elem = map.begin()->second;
   EXPECT_EQ("Client", elem.Name());
   EXPECT_EQ("11:22:33:44:55:66", elem.MacAddr());
 }
