@@ -12,23 +12,17 @@ machine or download master), you're good to go.
 ## Building
 ### Requirements
 
-To build this for your router, I recommend installing a debian chroot on
-your router and using up-to-date tools. One other option is to use
-cross-platform toolchain on your PC.
+- arm-linux-gnueabi-gcc (8 or 9)
+- cmake and ccmake
 
-Minimum requirements for building the tool are:
-
-  - gcc version 7.2.0,
-  - original or stub version of `libnvram.so`
-
-if you chose to build with original `/lib/libnvram.so`, you will also need
-to copy `/lib/libwlcsm.so` and `/usr/lib/libshared.so`.
+Simply invoke `cmake .` followed by `ccmake .`. `BUILD_DIST` controls whether
+the target version (for device) will be built; when OFF, build defaults to
+(host-side) unit testing.
 
 ### Compiling
 
-This is the only part that requires a bit of an effort. Supplied build files
-work well with modern build tools for linux. Assuming your tools meet
-requirements, a single `make` execution should suffice
+- use `make all install dist` to build target package (assumes `BUILD_DIST=on`).
+- use `make all test` to build and run tests (assumes `BUILD_DIST=off`).
 
 ## Usage
 
