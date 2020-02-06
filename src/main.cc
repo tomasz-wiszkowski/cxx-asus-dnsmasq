@@ -38,12 +38,15 @@
 
 namespace fs = std::experimental::filesystem;
 
+namespace {
 // Keep the temporary file name 'dnsmasq' without any further extensions.
 // Asus' RC expects commands to have very specific names when it confirms
 // their running state or when it shuts them down (~"pkill").
-constexpr char kTemporaryName[] = "/tmp/dnsmasq";
-constexpr char kOriginalName[] = "/usr/sbin/dnsmasq";
-constexpr char kDnsMasqHostsPath[] = "/jffs/dnsmasq-surrogate/hosts";
+constexpr const char kTemporaryName[] = "/tmp/dnsmasq";
+constexpr const char kOriginalName[] = "/usr/sbin/dnsmasq";
+constexpr const char kDnsMasqHostsPath[] = "/jffs/dnsmasq-surrogate/hosts";
+constexpr const char kDnsMasqConfigPath[] = "/etc/dnsmasq.conf";
+}  // namespace
 
 // Get path to this executable
 std::string getSelfPath() {
@@ -138,13 +141,11 @@ int help(char* const cmd) {
 }
 
 asus::DnsMasqConfig buildConfig() {
-  static constexpr const char cfgpath[] = "/etc/dnsmasq.conf";
-
   auto clients =
       asus::ProcessCustomClientList(bcm::nvram_get("custom_clientlist"));
   asus::DnsMasqConfig c;
 
-  std::ifstream cfg(cfgpath);
+  std::ifstream cfg(kDnsMasqConfigPath);
   if (cfg.good()) c.Load(cfg);
 
   c.RewriteHosts(clients);
@@ -162,11 +163,11 @@ asus::DnsMasqConfig buildConfig() {
 // jumping to actual dnsmasq to supply hostnames in your system.
 void rebuildConfig() {
   auto c = buildConfig();
-  static constexpr const char cfgpath[] = "/etc/dnsmasq.conf";
 
-  std::ofstream cfg(cfgpath);
+  std::ofstream cfg(kDnsMasqConfigPath);
   if (!cfg.good()) {
-    std::clog << "Could not save dnsmasq config file " << cfgpath << '\n';
+    std::clog << "Could not save dnsmasq config file " << kDnsMasqConfigPath
+              << '\n';
     return;
   }
 

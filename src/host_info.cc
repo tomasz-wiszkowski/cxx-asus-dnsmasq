@@ -31,9 +31,16 @@ void HostInfo::BuildIdFromMacAddress() {
     uint8_t bytes[8];
   } res;
 
+  // Expect MAC address in format: xx:xx:xx:xx:xx:xx.
+  if (mac_addr_.size() != 12 + 5) {
+    state_ = HostInfoState::InvalidMacAddress;
+    return;
+  }
+
   if (sscanf(mac_addr_.data(), "%2hhx:%2hhx:%2hhx:%2hhx:%2hhx:%2hhx",
              &res.bytes[5], &res.bytes[4], &res.bytes[3], &res.bytes[2],
              &res.bytes[1], &res.bytes[0]) != 6) {
+    std::clog << std::hex << res.mac;
     state_ = HostInfoState::InvalidMacAddress;
     return;
   }

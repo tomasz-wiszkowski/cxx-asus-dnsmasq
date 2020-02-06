@@ -10,7 +10,7 @@ case "$1" in
     ;;
 
   status)
-    /opt/bin/dnsmasq-surrogate query
+    /opt/bin/dnsmasq-surrogate showconfig
     ;;
 
   restart)

@@ -44,9 +44,9 @@ std::variant<HostInfo, ParseResult> ExtractClientInfo(std::string_view client) {
   auto mac_end = client.find('>', name_end + 1);
   if (mac_end == std::string::npos) return ParseResult::MissingFieldEndMarker;
 
-  auto res = HostInfo::For(
+  auto res = HostInfo::WithName(
       std::string(client.substr(name_end + 1, mac_end - name_end - 1)),
-      std::string(client.substr(0, name_end)), std::nullopt);
+      std::string(client.substr(0, name_end)));
 
   if (std::holds_alternative<HostInfo>(res)) {
     return std::get<HostInfo>(std::move(res));
@@ -65,9 +65,7 @@ HostInfoMap ProcessCustomClientList(std::string_view input) {
         [&res](auto&& v) {
           using T = std::decay_t<decltype(v)>;
           if constexpr (std::is_same_v<T, ParseResult>) {
-            std::clog << "Could not parse entry: " << v << '\n';
           } else if constexpr (std::is_same_v<T, HostInfo>) {
-            std::clog << v << '\n';
             res.emplace(v.Id(), std::move(v));
           }
         },

@@ -44,7 +44,7 @@ DnsMasqConfig::ValueType DnsMasqConfig::ParseConfigValue(
     if (host_end != std::string::npos) return std::string{value};
 
     auto res =
-        HostInfo::For(std::string(value.substr(0, mac_end)), std::nullopt,
+        HostInfo::WithIpAddr(std::string(value.substr(0, mac_end)),
                       std::string(value.substr(mac_end + 1)));
 
     if (std::holds_alternative<HostInfo>(res)) {

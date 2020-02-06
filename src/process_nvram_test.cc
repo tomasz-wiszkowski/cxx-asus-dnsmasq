@@ -10,13 +10,7 @@ using namespace std::literals;
 namespace asus {
 namespace test {
 
-class ProcessNVRamTest : public ::testing::Test {
- public:
-  void SetUp() {}
-  void TearDown() {}
-
- protected:
-};
+class ProcessNVRamTest : public ::testing::Test {};
 
 TEST_F(ProcessNVRamTest, ReadEmptyList) {
   const auto list = ""sv;
@@ -66,6 +60,87 @@ TEST_F(ProcessNVRamTest, InvalidInput) {
   EXPECT_EQ(0, ProcessCustomClientList("<Test>>>>").size());
   EXPECT_EQ(0, ProcessCustomClientList("<Test>>>>>>").size());
   EXPECT_EQ(0, ProcessCustomClientList("<>>>>>>").size());
+}
+
+class ExtractClientInfoTest : public ::testing::Test {};
+
+TEST_F(ExtractClientInfoTest, EmptyString) {
+  auto variant = ExtractClientInfo("");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidStartMarker, std::get<ParseResult>(variant));
+}
+
+TEST_F(ExtractClientInfoTest, BadStartMarker) {
+  auto variant = ExtractClientInfo("Hello");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidStartMarker, std::get<ParseResult>(variant));
+}
+
+TEST_F(ExtractClientInfoTest, MissingEndMarker) {
+  auto variant = ExtractClientInfo("<Hello");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidEndMarker, std::get<ParseResult>(variant));
+
+  variant = ExtractClientInfo("<Hello>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidEndMarker, std::get<ParseResult>(variant));
+}
+
+TEST_F(ExtractClientInfoTest, MissingMacField) {
+  auto variant = ExtractClientInfo("<Hello>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::MissingFieldEndMarker, std::get<ParseResult>(variant));
+}
+
+TEST_F(ExtractClientInfoTest, MissingClientInfoField) {
+  auto variant = ExtractClientInfo("<Hello>1>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::MissingFieldEndMarker, std::get<ParseResult>(variant));
+}
+
+TEST_F(ExtractClientInfoTest, MissingMacAddress) {
+  auto variant = ExtractClientInfo("<Hello>>>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+
+  variant = ExtractClientInfo("<Hello>>2>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+}
+
+TEST_F(ExtractClientInfoTest, InvalidMacAddress) {
+  auto variant = ExtractClientInfo("<Hello>MacAddress>>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+
+  variant = ExtractClientInfo("<Hello>12345>>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+
+  variant = ExtractClientInfo("<Hello>11:22:33:44:55>>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+
+  variant = ExtractClientInfo("<Hello>11:22:33:44:55:>>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+
+  variant = ExtractClientInfo("<Hello>11:22:33:44:55:6>>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+
+  variant = ExtractClientInfo("<Hello>1:22:33:44:55:66>>>");
+  ASSERT_TRUE(std::holds_alternative<ParseResult>(variant));
+  ASSERT_EQ(ParseResult::InvalidDefinition, std::get<ParseResult>(variant));
+}
+
+TEST_F(ExtractClientInfoTest, ValidMacAddress) {
+  auto variant = ExtractClientInfo("<Hello>13:57:9b:df:ec:a8>>>");
+  ASSERT_TRUE(std::holds_alternative<HostInfo>(variant));
+
+  const auto& host = std::get<HostInfo>(variant);
+  EXPECT_EQ("Hello", host.Name());
+  EXPECT_EQ("13:57:9b:df:ec:a8", host.MacAddr());
 }
 
 }  // namespace test
